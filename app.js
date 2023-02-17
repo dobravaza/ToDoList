@@ -68,6 +68,43 @@ const pushToList = userInput => {
 			console.log(taskText)
 			taskText.classList.toggle('completed')
 		})
+		let test = ''
+		let taskToEdit = ''
+		let usersInput = ''
+		const popUp = e => {
+			popup.style.display = 'flex'
+			const editAccept = document.querySelector('.accept')
+			const editCancel = document.querySelector('.cancel')
+			const popupInput = document.querySelector('.popup-input')
+
+			// Zapisz id zadania, które chcemy edytować
+			const taskId = newTask.getAttribute('data-id')
+
+			// Ustaw wartość pola input na aktualną treść zadania
+			taskToEdit = document.querySelector(`li[data-id="${taskId}"] span`)
+			popupInput.addEventListener('keyup', e => {
+				// console.log(e.target.value)
+				usersInput = e.target.value
+				// console.log(usersInput)
+			})
+
+			// test = popupInput.value = taskToEdit.textContent
+
+			editCancel.addEventListener('click', () => {
+				popup.style.display = 'none'
+			})
+		}
+
+		editAccept.addEventListener('click', () => {
+			const newTaskText = usersInput
+			console.log(usersInput)
+			if (newTaskText !== '') {
+				taskToEdit.textContent = newTaskText
+			}
+
+			popup.style.display = 'none'
+		})
+
 		editBtn.addEventListener('click', popUp)
 	}
 }
@@ -85,8 +122,3 @@ addBtn.addEventListener('click', () => {
 	const userInput = todoInput.value
 	pushToList(userInput)
 })
-
-const popUp = () => {
-	popup.style.display = 'flex'
-	console.log('editCanel')
-}
