@@ -3,9 +3,13 @@ const ulList = document.querySelector('ul')
 const addBtn = document.querySelector('.btn-add')
 const errorEmpty = document.querySelector('.error-empty')
 const errorInfo = document.querySelector('.error-info')
+const popup = document.querySelector('.popup')
+const editAccept = document.querySelector('.accept')
+const editCancel = document.querySelector('.cancel')
 // const divTools = document.createElement('div')
 // console.log(divTools)
 // divTools.appendChild(ulList)
+
 const pushToList = userInput => {
 	if (userInput.trim() === '') {
 		errorEmpty.textContent = 'Musisz wpisać treść zadania!'
@@ -59,11 +63,21 @@ const pushToList = userInput => {
 			const listItem = event.target.closest('li')
 			listItem.remove()
 		})
+
+		completeBtn.addEventListener('click', () => {
+			console.log(taskText)
+			taskText.classList.toggle('completed')
+		})
+		editBtn.addEventListener('click', popUp)
 	}
 }
 
 todoInput.addEventListener('keydown', e => {
 	const userInput = e.target.value
+
+	if (e.keyCode === 13) {
+		pushToList(userInput)
+	}
 	// console.log(userInput)
 })
 
@@ -71,3 +85,8 @@ addBtn.addEventListener('click', () => {
 	const userInput = todoInput.value
 	pushToList(userInput)
 })
+
+const popUp = () => {
+	popup.style.display = 'flex'
+	console.log('editCanel')
+}
