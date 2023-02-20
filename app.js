@@ -1,124 +1,116 @@
-const todoInput = document.querySelector('.todo-input')
-const ulList = document.querySelector('ul')
-const addBtn = document.querySelector('.btn-add')
-const errorEmpty = document.querySelector('.error-empty')
-const errorInfo = document.querySelector('.error-info')
-const popup = document.querySelector('.popup')
-const editAccept = document.querySelector('.accept')
-const editCancel = document.querySelector('.cancel')
-// const divTools = document.createElement('div')
-// console.log(divTools)
-// divTools.appendChild(ulList)
+let popup
+let popupInfo
+let todoToEdit
+let popupInput
+let popupAddBtn
+let popupCloseBtn
 
-const pushToList = userInput => {
-	if (userInput.trim() === '') {
-		errorEmpty.textContent = 'Musisz wpisać treść zadania!'
-	} else {
-		errorEmpty.textContent = ''
+const main = () => {
+	prepareDOMElements()
+	prepareDOMEvents()
+}
+
+const prepareDOMElements = () => {
+	todoInput = document.querySelector('.todo-input')
+	errorInfo = document.querySelector('.error-info')
+	addBtn = document.querySelector('.btn-add')
+	ulList = document.querySelector('ul')
+	popup = document.querySelector('.popup')
+	popupInfo = document.querySelector('.popup-info')
+	popupInput = document.querySelector('.popup-input')
+	popupAddBtn = document.querySelector('.accept')
+	popupCloseBtn = document.querySelector('.cancel')
+}
+
+const prepareDOMEvents = () => {
+	addBtn.addEventListener('click', addNewTodo)
+	ulList.addEventListener('click', checkClick)
+	popupCloseBtn.addEventListener('click', closePopup)
+	popupAddBtn.addEventListener('click', changeTodoText)
+	todoInput.addEventListener('click', enterKeyCheck)
+}
+
+const addNewTodo = () => {
+	if (todoInput.value !== '') {
+		newTodo = document.createElement('li')
+		newTodo.textContent = todoInput.value
+		createToolsArea()
+
+		ulList.appendChild(newTodo)
+
 		todoInput.value = ''
+		errorInfo.textContent = ''
+	} else {
+		errorInfo.textContent = 'wpisz tresc zadania!'
+	}
+}
+const createToolsArea = () => {
+	const toolsPanel = document.createElement('div')
+	toolsPanel.classList.add('tools')
+	newTodo.append(toolsPanel)
+	///
+	const completeBtn = document.createElement('button')
+	completeBtn.classList.add('complete')
+	completeBtn.innerHTML = '<i class="fas fa-check"></i>'
+	//////
+	const editBtn = document.createElement('button')
+	editBtn.classList.add('edit')
+	editBtn.textContent = 'EDIT'
+	/////
+	const deleteBtn = document.createElement('button')
+	deleteBtn.classList.add('delete')
+	deleteBtn.iinerHTML = `<i class="fa fa-times"></i>`
 
-		const newTask = document.createElement('li')
-		newTask.setAttribute('data-id', 'test2')
+	toolsPanel.append(completeBtn, editBtn, deleteBtn)
 
-		const taskText = document.createElement('span')
-		taskText.textContent = userInput
+	//////
+}
 
-		const divTools = document.createElement('div')
-		divTools.classList.add('tools')
+/////
 
-		const completeBtn = document.createElement('button')
-		completeBtn.classList.add('complete')
-		const completeIcon = document.createElement('i')
-		completeIcon.classList.add('fas', 'fa-check')
-		completeBtn.appendChild(completeIcon)
-
-		const editBtn = document.createElement('button')
-		editBtn.classList.add('edit')
-		editBtn.textContent = 'EDIT'
-
-		const deleteBtn = document.createElement('button')
-		deleteBtn.classList.add('delete')
-		const deleteIcon = document.createElement('i')
-		deleteIcon.classList.add('fas', 'fa-times')
-		deleteBtn.appendChild(deleteIcon)
-
-		divTools.appendChild(completeBtn)
-		divTools.appendChild(editBtn)
-		divTools.appendChild(deleteBtn)
-
-		newTask.appendChild(taskText)
-		newTask.appendChild(divTools)
-
-		ulList.appendChild(newTask)
-
-		const taskItems = document.querySelectorAll('li')
-		if (newTask) {
-			errorInfo.textContent = ''
-		}
-		for (let i = 0; i < taskItems.length; i++) {
-			taskItems[i].setAttribute('data-id', 'test' + (i + 1))
-		}
-
-		deleteBtn.addEventListener('click', e => {
-			const listItem = event.target.closest('li')
-			listItem.remove()
-		})
-
-		completeBtn.addEventListener('click', () => {
-			console.log(taskText)
-			taskText.classList.toggle('completed')
-		})
-		let test = ''
-		let taskToEdit = ''
-		let usersInput = ''
-		const popUp = e => {
-			popup.style.display = 'flex'
-			const editAccept = document.querySelector('.accept')
-			const editCancel = document.querySelector('.cancel')
-			const popupInput = document.querySelector('.popup-input')
-
-			// Zapisz id zadania, które chcemy edytować
-			const taskId = newTask.getAttribute('data-id')
-
-			// Ustaw wartość pola input na aktualną treść zadania
-			taskToEdit = document.querySelector(`li[data-id="${taskId}"] span`)
-			popupInput.addEventListener('keyup', e => {
-				// console.log(e.target.value)
-				usersInput = e.target.value
-				// console.log(usersInput)
-			})
-
-			// test = popupInput.value = taskToEdit.textContent
-
-			editCancel.addEventListener('click', () => {
-				popup.style.display = 'none'
-			})
-		}
-
-		editAccept.addEventListener('click', () => {
-			const newTaskText = usersInput
-			console.log(usersInput)
-			if (newTaskText !== '') {
-				taskToEdit.textContent = newTaskText
-			}
-
-			popup.style.display = 'none'
-		})
-
-		editBtn.addEventListener('click', popUp)
+const checkClick = e => {
+	if (e.target.matches('.complete')) {
+		e.target.closest('li').classList.toggle('completed')
+		e.target.classList.togle('completed')
+	} else if (e.target.matches('.edit')) {
+		editTodo(e)
+	} else if (e.target.matches('.delete')) {
+		deleteTodo(e)
 	}
 }
 
-todoInput.addEventListener('keydown', e => {
-	const userInput = e.target.value
+const editTodo = e => {
+	todoToEdit = e.target.closest('li')
+	popupInput.value = todoToEdit.firstChild.textContent
+	popup.style.display = 'flex'
+}
 
-	if (e.keyCode === 13) {
-		pushToList(userInput)
+const closePopup = () => {
+	popup.style.display = 'none'
+	popupInfo.textContent = ''
+}
+const changeTodoText = () => {
+	if (popupInput.value !== '') {
+		todoToEdit.firstChild.textContent = popupInput.value
+		popup.style.display = 'none'
+		popupInfo.textContent = ''
+	} else {
+		popupInfo.textContent = ' musisz pdoac jakas tresc!'
 	}
-	// console.log(userInput)
-})
+}
 
-addBtn.addEventListener('click', () => {
-	const userInput = todoInput.value
-	pushToList(userInput)
-})
+const deleteTodo = e => {
+	e.target.closest('li').remove()
+	const allTodos = ulList.querySelectorAll('li')
+	if (allTodos.length === 0) {
+		errorInfo.textContent = ' brak zadan na liscie'
+	}
+}
+
+const enterKeyCheck = e => {
+	if (e.key === 'Enter') {
+		addNewTodo()
+	}
+}
+
+document.addEventListener('DOMContentLoaded', main)
